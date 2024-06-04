@@ -120,7 +120,7 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
             y_cords = 'fail'
     return x_cords,y_cords
 #Find correct lawns
-def configure_circle(img,lawn_count):
+async def configure_circle(img,lawn_count):
     print('configuring')
     flag = False
     for param1 in range(10, 55):

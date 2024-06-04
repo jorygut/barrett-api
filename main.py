@@ -121,16 +121,17 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
     return x_cords,y_cords
 #Find correct lawns
 async def configure_circle(img,lawn_count):
-    flag = False
-    for param1 in range(10, 55):
-        print('configuring')
-        if flag:
-            break
-        for param2 in range(10, 55):
-            x_cords, y_cords = detect_lighter_circles(img, param1, param2,lawn_count) 
-            if x_cords != 'fail':
-                flag = True
-                break  
+    if img:
+        flag = False
+        for param1 in range(10, 55):
+            print('configuring')
+            if flag:
+                break
+            for param2 in range(10, 55):
+                x_cords, y_cords = detect_lighter_circles(img, param1, param2,lawn_count) 
+                if x_cords != 'fail':
+                    flag = True
+                    break  
     return x_cords,y_cords
 #Create output csv
 async def create_file(input_file,lawn_count, img):

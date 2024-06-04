@@ -84,7 +84,11 @@ async def read_xml_file(file):
 #Detect feed lawns
 def detect_lighter_circles(image_path, par1, par2, lawn_count):
     #Read and grayscale image
-    image = cv2.imread(image_path)
+    image_data = image_file.read()
+
+    # Decode the image data using OpenCV
+    image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+    #image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     #Apply gaussian blur and detect circle

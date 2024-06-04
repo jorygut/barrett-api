@@ -397,14 +397,11 @@ def upload_image_and_number():
     except ValueError:
         return jsonify({"error": "Number is not valid"}), 400
 
-    #Save image file
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
-    image_file.save(image_path)
 
     #Handle xml file
     try:
         print('starting df')
-        df = create_file(xml_file, number, image_path)
+        df = create_file(xml_file, number, image_file)
         print(df.columns)
 
         df.to_csv('{xml_file}.csv', index=False)

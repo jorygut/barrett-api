@@ -26,7 +26,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 #Configure Flask API
 app = Flask(__name__, static_folder="./dist", static_url_path='')
 vite = Vite(app)
-CORS(app, origins=['https://barrett-app.vercel.app','https://barrett-app.vercel.app/regress'])  # Allow all origins for simplicity
+CORS(app)  # Allow all origins for simplicity
 print('app_started')
 
 #Create upload folder

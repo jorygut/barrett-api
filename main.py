@@ -404,8 +404,15 @@ async def upload_image_and_number():
     except ValueError:
         return jsonify({"error": "Number is not valid"}), 400
     print('starting df')
-    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
+    uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
+    os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
+
+    # Construct image path
+    image_path = os.path.join(uploads_dir, image_file)
+
+    # Save the image
     image_file.save(image_path)
+
     df = await create_file(xml_file, number, image_file)
     print('finished_df')
     print(df)

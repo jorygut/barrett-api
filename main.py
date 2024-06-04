@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import werkzeug
+from werkzeug.utils import secure_filename
 
 #Configure Flask API
 app = Flask(__name__, static_folder="./dist", static_url_path='')
@@ -407,8 +408,10 @@ async def upload_image_and_number():
     uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
     os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
 
+    image_filename = secure_filename(image_file.filename)
+
     # Construct image path
-    image_path = os.path.join(uploads_dir, image_file)
+    image_path = os.path.join(uploads_dir, image_filename)
 
     # Save the image
     image_file.save(image_path)

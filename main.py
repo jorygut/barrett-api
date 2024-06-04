@@ -22,6 +22,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+import werkzeug
 
 #Configure Flask API
 app = Flask(__name__, static_folder="./dist", static_url_path='')
@@ -83,10 +84,14 @@ async def read_xml_file(file):
 #Detect feed lawns
 def detect_lighter_circles(image_path, par1, par2, lawn_count):
     print(type(image_path))
-    _, filename = os.path.splitext(image_path.filename)
-    temp_filepath = f"/tmp/{filename}"
-    image_path.save(temp_filepath)
-    image = cv2.imread(temp_filepath)
+    if not isinstance(image_path, werkzeug.datastructures.FileStorage):
+        return None  # Handle non-file uploads
+
+    # Read the image data from the FileStorage object
+    image_data = image_path.read()
+
+    # Decode the image data using OpenCV
+    image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
 
     #Read and grayscale image
     #image = cv2.imread(image_path)

@@ -10,3 +10,4 @@ matplotlib
 seaborn
 gunicorn
 flask[async]
+werkzeug

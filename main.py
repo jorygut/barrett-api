@@ -135,7 +135,7 @@ async def configure_circle(img,lawn_count):
 #Create output csv
 async def create_file(input_file,lawn_count, img):
     print('creating file')
-    x_cords, y_cords = configure_circle(img,lawn_count)
+    x_cords, y_cords = await configure_circle(img,lawn_count)
     print('circle configured')
     tracks_info = read_xml_file(input_file)
     print(tracks_info)

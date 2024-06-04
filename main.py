@@ -84,12 +84,7 @@ async def read_xml_file(file):
 #Detect feed lawns
 def detect_lighter_circles(image_path, par1, par2, lawn_count):
     #Read and grayscale image
-    image_data = image_path.read()
-
-    # Decode the image data using OpenCV
-    image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
-    print(image)
-    #image = cv2.imread(image_path)
+    image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     #Apply gaussian blur and detect circle
@@ -409,6 +404,8 @@ async def upload_image_and_number():
     except ValueError:
         return jsonify({"error": "Number is not valid"}), 400
     print('starting df')
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
+    image_file.save(image_path)
     df = await create_file(xml_file, number, image_file)
     print('finished_df')
     print(df)

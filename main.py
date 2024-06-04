@@ -40,7 +40,7 @@ def index():
 
 #Create xml route
 @app.route("/api/xml", methods=['POST'])
-def read_xml_file(file):
+async def read_xml_file(file):
     #Parse xml file
     tree = ET.parse(file)
     root = tree.getroot()
@@ -401,18 +401,13 @@ async def upload_image_and_number():
         number = int(number)
     except ValueError:
         return jsonify({"error": "Number is not valid"}), 400
+    print('starting df')
+    df = await create_file(xml_file, number, image_file)
+    print('finished_df')
+    print(df)
 
-    #Handle xml file
-    try:
-        print('starting df')
-        df = await create_file(xml_file, number, image_file)
-        print('finished_df')
-        print(df)
-
-        df.to_csv('result.csv', index=False)
-        return send_file('result.csv', as_attachment=True)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    df.to_csv('result.csv', index=False)
+    return send_file('result.csv', as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])
 def perform_regression():

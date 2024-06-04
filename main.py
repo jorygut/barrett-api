@@ -416,7 +416,7 @@ async def upload_image_and_number():
     # Save the image
     image_file.save(image_path)
 
-    df = await create_file(xml_file, number, image_file)
+    df = await create_file(xml_file, number, image_path)
     print('finished_df')
     print(df)
 

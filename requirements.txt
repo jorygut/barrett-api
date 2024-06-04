@@ -1,0 +1,11 @@
+Flask
+flask-cors
+pandas
+numpy
+statsmodels
+scikit-learn
+opencv-python-headless
+flask-vite
+matplotlib
+seaborn
+gunicorn

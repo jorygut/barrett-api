@@ -84,7 +84,7 @@ async def read_xml_file(file):
 #Detect feed lawns
 def detect_lighter_circles(image_path, par1, par2, lawn_count):
     #Read and grayscale image
-    image_data = image_file.read()
+    image_data = image_path.read()
 
     # Decode the image data using OpenCV
     image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)

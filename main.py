@@ -121,13 +121,13 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
     return x_cords,y_cords
 #Find correct lawns
 def configure_circle(img,lawn_count):
+    print('configuring')
     flag = False
     for param1 in range(10, 55):
         if flag:
             break
         for param2 in range(10, 55):
             x_cords, y_cords = detect_lighter_circles(img, param1, param2,lawn_count) 
-            print(x_cords)
             if x_cords != 'fail':
                 flag = True
                 break  
@@ -136,6 +136,7 @@ def configure_circle(img,lawn_count):
 def create_file(input_file,lawn_count, img):
     print('creating file')
     x_cords, y_cords = configure_circle(img,lawn_count)
+    print('circle configured')
     tracks_info = read_xml_file(input_file)
     print(tracks_info)
     particle_count = 0

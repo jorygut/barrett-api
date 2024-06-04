@@ -133,7 +133,7 @@ def configure_circle(img,lawn_count):
                 break  
     return x_cords,y_cords
 #Create output csv
-def create_file(input_file,lawn_count, img):
+async def create_file(input_file,lawn_count, img):
     print('creating file')
     x_cords, y_cords = configure_circle(img,lawn_count)
     print('circle configured')
@@ -373,7 +373,7 @@ def predict_tracks(track_file):
 
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])
-def upload_image_and_number():
+async def upload_image_and_number():
     #Check proper inputs
     if 'image_file' not in request.files:
         return jsonify({"error": "No image file part in the request"}), 400
@@ -405,7 +405,7 @@ def upload_image_and_number():
     #Handle xml file
     try:
         print('starting df')
-        df = create_file(xml_file, number, image_file)
+        df = await create_file(xml_file, number, image_file)
         print('finished_df')
         print(df)
 

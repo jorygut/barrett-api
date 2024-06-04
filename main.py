@@ -134,8 +134,10 @@ def configure_circle(img,lawn_count):
     return x_cords,y_cords
 #Create output csv
 def create_file(input_file,lawn_count, img):
+    print('creating file')
     x_cords, y_cords = configure_circle(img,lawn_count)
     tracks_info = read_xml_file(input_file)
+    print(tracks_info)
     particle_count = 0
     detection_count = 0
 
@@ -385,6 +387,8 @@ def upload_image_and_number():
     number = request.form['number']
     xml_file = request.files['xml_file']
     print(xml_file)
+    print(number)
+    print(image_file)
     #Check inputs
     if image_file.filename == '' or xml_file.filename == '':
         return jsonify({"error": "No selected file for either image or XML"}), 400

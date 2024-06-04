@@ -404,8 +404,8 @@ def upload_image_and_number():
         df = create_file(xml_file, number, image_file)
         print(df.columns)
 
-        df.to_csv('{xml_file}.csv', index=False)
-        return send_file('{xml_file}.csv', as_attachment=True)
+        df.to_csv('result.csv', index=False)
+        return send_file('result.csv', as_attachment=True)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 #Create and download regression model

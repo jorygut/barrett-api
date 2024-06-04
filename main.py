@@ -86,15 +86,7 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
     _, filename = os.path.splitext(image_path.filename)
     temp_filepath = f"/tmp/{filename}"
     image_path.save(temp_filepath)
-
-    try:
-        # Read the image using the temporary filepath
-        image = cv2.imread(temp_filepath)
-        # ... rest of your processing
-
-    finally:
-        # Clean up the temporary file (optional)
-        os.remove(temp_filepath)
+    image = cv2.imread(temp_filepath)
 
     #Read and grayscale image
     #image = cv2.imread(image_path)

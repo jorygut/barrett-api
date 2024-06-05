@@ -85,15 +85,9 @@ def read_xml_file(file):
     return tracks_info
 
 #Detect feed lawns
-def detect_lighter_circles(image_path, par1, par2, lawn_count):
-    image = cv2.imread(image_path)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # Apply Canny edge detection
-    edges = cv2.Canny(gray, 20, 150)
-    
-    # Detect circles
-    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=2, minDist=100,
+def detect_lighter_circles(gray, par1, par2, lawn_count):
+
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, dp=2, minDist=100,
                                param1=par1, param2=par2, minRadius=10,
                                maxRadius=100)
 
@@ -124,14 +118,20 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
     return x_cords,y_cords
 #Find correct lawns
 def configure_circle(img,lawn_count):
-    if img:
+    image = cv2.imread(img)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    #Apply gaussian blur and detect circle
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    if gray:
         flag = False
         for param1 in range(10, 55):
             print('configuring')
             if flag:
                 break
             for param2 in range(10, 55):
-                x_cords, y_cords = detect_lighter_circles(img, param1, param2,lawn_count) 
+                x_cords, y_cords = detect_lighter_circles(gray, param1, param2,lawn_count) 
                 if x_cords != 'fail':
                     flag = True
                     break  

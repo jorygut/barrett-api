@@ -5,7 +5,6 @@ from flask.helpers import send_from_directory
 import pandas as pd
 import numpy as np
 import math
-from asgiref.sync import run_async
 import statsmodels.api as sm
 from statsmodels.api import add_constant
 from sklearn.preprocessing import LabelEncoder
@@ -419,18 +418,13 @@ def upload_image_and_number():
 
     # Save the image
     image_file.save(image_path)
-    async def process_file():
-        df = await create_file(xml_file, number, image_path)
-        print('finished_df')
-        print(df)
-        df.to_csv('result.csv', index=False)
-        return 'result.csv'
-
-    # Use run_async to run the async function
-    result_file = run_async(process_file())
+    df = create_file(xml_file, number, image_path)
+    print('finished_df')
+    print(df)
+    df.to_csv('result.csv', index=False)
 
     # Send the file as an attachment
-    return send_file(result_file, as_attachment=True)
+    return send_file('result.csv', as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])
 def perform_regression():

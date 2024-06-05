@@ -28,7 +28,7 @@ from werkzeug.utils import secure_filename
 import asyncio
 
 #Configure Flask API
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./dist", static_url_path='')
 vite = Vite(app)
 CORS(app)  # Allow all origins for simplicity
 print('app_started')
@@ -40,7 +40,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #Create home route
 @app.route("/")
 def index():
-    return {'test': 'hello'}
+    return send_from_directory(app.static_folder, 'index.html')
 
 #Create xml route
 @app.route("/api/xml", methods=['POST'])

@@ -86,15 +86,14 @@ def read_xml_file(file):
 
 #Detect feed lawns
 def detect_lighter_circles(image_path, par1, par2, lawn_count):
-    #Read and grayscale image
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    #Apply gaussian blur and detect circle
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
-    _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, dp=2, minDist=100,
+    # Apply Canny edge detection
+    edges = cv2.Canny(gray, 50, 150)
+    
+    # Detect circles
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=2, minDist=100,
                                param1=par1, param2=par2, minRadius=10,
                                maxRadius=100)
 

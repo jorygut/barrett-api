@@ -378,7 +378,7 @@ def predict_tracks(track_file):
 
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])
-async def upload_image_and_number():
+def upload_image_and_number():
     print('image uploaded')
     #Check proper inputs
     if 'image_file' not in request.files:

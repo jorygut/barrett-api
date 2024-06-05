@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS, cross_origin
+from flask import current_app
 from flask.helpers import send_from_directory
 import pandas as pd
 import numpy as np
@@ -423,8 +424,14 @@ async def upload_image_and_number():
         print(df)
         df.to_csv('result.csv', index=False)
         return 'result.csv'
-    loop = asyncio.get_event_loop()
+    try:
+        loop = current_app.asgi_ctx.loop
+    except AttributeError:
+        raise RuntimeError("No event loop found in Flask's asgi_ctx")
+
+    # Run the async function using the Flask event loop
     result_file = loop.run_until_complete(process_file())
+
     return send_file(result_file, as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])

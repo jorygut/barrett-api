@@ -28,7 +28,7 @@ from werkzeug.utils import secure_filename
 import asyncio
 
 #Configure Flask API
-app = Flask(__name__, static_folder="./dist", static_url_path='')
+app = Flask(__name__)
 vite = Vite(app)
 CORS(app)  # Allow all origins for simplicity
 print('app_started')

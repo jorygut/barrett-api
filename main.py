@@ -423,7 +423,8 @@ async def upload_image_and_number():
         print(df)
         df.to_csv('result.csv', index=False)
         return 'result.csv'
-    result_file = asyncio.run(process_file())
+    loop = asyncio.get_event_loop()
+    result_file = loop.run_until_complete(process_file())
     return send_file(result_file, as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])

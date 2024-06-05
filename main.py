@@ -90,7 +90,7 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # Apply Canny edge detection
-    edges = cv2.Canny(gray, 50, 150)
+    edges = cv2.Canny(gray, 20, 150)
     
     # Detect circles
     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=2, minDist=100,

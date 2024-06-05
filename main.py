@@ -44,7 +44,7 @@ def index():
 
 #Create xml route
 @app.route("/api/xml", methods=['POST'])
-async def read_xml_file(file):
+def read_xml_file(file):
     #Parse xml file
     tree = ET.parse(file)
     root = tree.getroot()
@@ -138,7 +138,7 @@ def configure_circle(img,lawn_count):
                     break  
     return x_cords,y_cords
 #Create output csv
-async def create_file(input_file,lawn_count, img):
+def create_file(input_file,lawn_count, img):
     print('creating file')
     x_cords, y_cords = configure_circle(img,lawn_count)
     print('circle configured')
@@ -378,7 +378,7 @@ def predict_tracks(track_file):
 
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])
-def upload_image_and_number():
+async def upload_image_and_number():
     print('image uploaded')
     #Check proper inputs
     if 'image_file' not in request.files:
@@ -418,7 +418,7 @@ def upload_image_and_number():
 
     # Save the image
     image_file.save(image_path)
-    df = create_file(xml_file, number, image_path)
+    df = await create_file(xml_file, number, image_path)
     print('finished_df')
     print(df)
     df.to_csv('result.csv', index=False)

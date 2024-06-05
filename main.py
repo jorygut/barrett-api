@@ -24,6 +24,7 @@ import seaborn as sns
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import werkzeug
 from werkzeug.utils import secure_filename
+import asyncio
 
 #Configure Flask API
 app = Flask(__name__, static_folder="./dist", static_url_path='')
@@ -377,6 +378,7 @@ def predict_tracks(track_file):
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])
 async def upload_image_and_number():
+    print('image uploaded')
     #Check proper inputs
     if 'image_file' not in request.files:
         return jsonify({"error": "No image file part in the request"}), 400
@@ -415,13 +417,14 @@ async def upload_image_and_number():
 
     # Save the image
     image_file.save(image_path)
-
-    df = await create_file(xml_file, number, image_path)
-    print('finished_df')
-    print(df)
-
-    df.to_csv('result.csv', index=False)
-    return send_file('result.csv', as_attachment=True)
+    async def process_file():
+        df = await create_file(xml_file, number, image_path)
+        print('finished_df')
+        print(df)
+        df.to_csv('result.csv', index=False)
+        return 'result.csv'
+    result_file = asyncio.run(process_file())
+    return send_file(result_file, as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])
 def perform_regression():

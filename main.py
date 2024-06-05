@@ -26,10 +26,14 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 import werkzeug
 from werkzeug.utils import secure_filename
 import asyncio
+from flask_executor import Executor
+import concurrent.futures
+
 
 #Configure Flask API
 app = Flask(__name__, static_folder="./dist", static_url_path='')
 vite = Vite(app)
+executor = Executor(app)
 CORS(app)  # Allow all origins for simplicity
 print('app_started')
 
@@ -418,7 +422,8 @@ async def upload_image_and_number():
 
     # Save the image
     image_file.save(image_path)
-    df = await create_file(xml_file, number, image_path)
+    future = executor.submit(create_file, xml_file, number, image_path)
+    df = await future
     print('finished_df')
     print(df)
     df.to_csv('result.csv', index=False)

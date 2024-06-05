@@ -40,7 +40,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #Create home route
 @app.route("/")
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    return {'test': 'hello'}
 
 #Create xml route
 @app.route("/api/xml", methods=['POST'])

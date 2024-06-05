@@ -481,5 +481,5 @@ def test():
 if __name__ == "__main__":
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
-    app.run()
+    app.run(asgi=True)
 

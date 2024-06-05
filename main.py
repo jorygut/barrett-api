@@ -5,6 +5,7 @@ from flask.helpers import send_from_directory
 import pandas as pd
 import numpy as np
 import math
+from asgiref.sync import run_async
 import statsmodels.api as sm
 from statsmodels.api import add_constant
 from sklearn.preprocessing import LabelEncoder
@@ -424,14 +425,11 @@ def upload_image_and_number():
         print(df)
         df.to_csv('result.csv', index=False)
         return 'result.csv'
-    try:
-        loop = current_app.asgi_ctx.loop
-    except AttributeError:
-        raise RuntimeError("No event loop found in Flask's asgi_ctx")
 
-    # Run the async function using the Flask event loop
-    result_file = loop.run_until_complete(process_file())
+    # Use run_async to run the async function
+    result_file = run_async(process_file())
 
+    # Send the file as an attachment
     return send_file(result_file, as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])
@@ -481,5 +479,5 @@ def test():
 if __name__ == "__main__":
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
-    app.run(asgi=True)
+    app.run()
 

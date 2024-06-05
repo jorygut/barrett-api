@@ -127,11 +127,11 @@ def detect_lighter_circles(image_path, par1, par2, lawn_count):
 def configure_circle(img,lawn_count):
     if img:
         flag = False
-        for param1 in range(15, 55):
+        for param1 in range(20, 55):
             print('configuring')
             if flag:
                 break
-            for param2 in range(15, 55):
+            for param2 in range(20, 55):
                 x_cords, y_cords = detect_lighter_circles(img, param1, param2,lawn_count) 
                 if x_cords != 'fail':
                     flag = True

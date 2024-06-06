@@ -576,7 +576,7 @@ def get_insight():
     print(final_df)
     all_strains = analyze_patterns(final_df)
     print(all_strains)
-    return all_strains
+    return jsonify(all_strains)
 
 @app.route('/test',  methods=['POST', 'GET'])
 def test():

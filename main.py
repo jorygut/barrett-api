@@ -451,10 +451,16 @@ def upload_image_and_number():
     df = create_file(xml_file, number, image_path)
     print('finished_df')
     print(df)
-    df.to_csv('result.csv', index=False)
+    xml_filename = os.path.splitext(xml_file.filename)[0]
+
+    # Construct CSV filename
+    csv_filename = f"{xml_filename}.csv"
+
+    # Save DataFrame to CSV
+    df.to_csv(os.path.join(uploads_dir, csv_filename), index=False)
 
     # Send the file as an attachment
-    return send_file('result.csv', as_attachment=True)
+    return send_file(os.path.join(uploads_dir, csv_filename), as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])
 def perform_regression():

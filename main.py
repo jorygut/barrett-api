@@ -455,6 +455,7 @@ def upload_image_and_number():
 
     # Construct CSV filename
     csv_filename = f"{xml_filename}.csv"
+    print(csv_filename)
 
     # Save DataFrame to CSV
     df.to_csv(os.path.join(uploads_dir, csv_filename), index=False)

@@ -563,7 +563,7 @@ def send_error_bars():
 @app.route('/analyze', methods=['POST', 'GET'])
 def get_insight():
     final_df = pd.DataFrame()
-    uploaded_files =  request.files.getlist('csv')
+    uploaded_files =  request.files.getlist('files')
     print(uploaded_files)
     strain = ""
     for file in uploaded_files:

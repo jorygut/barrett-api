@@ -406,6 +406,42 @@ def make_error_bars(df, x, y):
     # Return the BytesIO object containing the plot
     return buffer
 
+def analyze_patterns(df):
+    values = []
+    strain_dic = {}
+    speed_dic = {}
+    lawn_dic = {}
+    speed_increase_dict = {}
+    speed_decrease_dict = {}
+    for index, row in df.iterrows():
+        if row['Strain'] not in strain_dic:
+            strain_dic[row['Strain']] = 1
+            speed_dic[row['Strain']] = row['Average_Speed']
+            speed_increase_dict[row['Strain']] = ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
+            speed_decrease_dict[row['Strain']] = ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
+            if row['Leaves_Lawn'] == True:
+                lawn_dic[row['Strain']] = 1
+            else:
+                lawn_dic[row['Strain']] = 0
+        else:
+            strain_dic[row['Strain']] += 1
+            speed_dic[row['Strain']] += row['Average_Speed']
+            if row['Leaves_Lawn'] == True:
+                lawn_dic[row['Strain']] += 1
+            speed_increase_dict[row['Strain']] += ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
+            speed_decrease_dict[row['Strain']] += ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
+    for i in strain_dic:
+        data = {
+            'strain': i,
+            'count': strain_dic[i],
+            'average_speed': speed_dic[i] / strain_dic[i],
+            'percent_leaves_lawn': lawn_dic[i] / strain_dic[i],
+            'average_speed_shock_start': speed_increase_dict[i] / strain_dic[i],
+            'average_speed_shock_end': speed_decrease_dict[i] / strain_dic[i]
+        }
+        values.append(data)
+    return values
+        
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])
 def upload_image_and_number():
@@ -523,6 +559,24 @@ def send_error_bars():
     with open('error_bars.png', 'wb') as f:
         f.write(png.read())
     return send_file('error_bars.png', as_attachment=True)
+
+@app.route('/analyze', methods=['POST', 'GET'])
+def get_insight():
+    final_df = pd.DataFrame()
+    uploaded_files =  request.files.getlist('csv')
+    print(uploaded_files)
+    strain = ""
+    for file in uploaded_files:
+        title = str(file).split()
+        strain = title[2]
+        df = pd.read_csv(file)
+        df = analyze(df)
+        f = make_reg_df(df,strain)
+        final_df = pd.concat([final_df, pd.DataFrame(f)], ignore_index=True)
+    print(final_df)
+    all_strains = analyze_patterns(final_df)
+    print(all_strains)
+    return all_strains
 
 @app.route('/test',  methods=['POST', 'GET'])
 def test():

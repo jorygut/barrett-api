@@ -17,6 +17,7 @@ import cv2
 from flask import send_file
 from flask_vite import Vite
 from io import BytesIO
+import io
 import json
 import matplotlib
 matplotlib.use('Agg')
@@ -375,6 +376,35 @@ def predict_tracks(track_file):
 
     return fig
 
+def make_error_bars(df, x, y):
+    # Group by the 'Strain' column and calculate the mean and standard deviation for 'y'
+    grouped = df.groupby(x)[y].agg(['mean', 'std'])
+
+    # Extract x and y values
+    x_values = grouped.index
+    y_means = grouped['mean'].values
+    y_std = grouped['std'].values
+
+    # Plotting
+    plt.errorbar(x_values, y_means, yerr=y_std, fmt='o', capsize=5, label='Data with error bars')
+
+    # Customize the plot
+    plt.xlabel(x)
+    plt.ylabel(y)
+    plt.title(f'Plot with Error Bars ({x} vs {y})')
+    plt.legend()
+    plt.grid(True)
+
+    # Save the plot as a BytesIO object
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Clear the plot to avoid displaying it again
+    plt.clf()
+
+    # Return the BytesIO object containing the plot
+    return buffer
 
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])
@@ -466,6 +496,27 @@ def build_model():
     predicted_tracks = predict_tracks(files[0])
     
     return send_file('predicted_tracks.png', as_attachment=True)
+@app.route('/graph', methods=['POST', 'GET'])
+def send_error_bars():
+    final_df = pd.DataFrame()
+    uploaded_files =  request.files.getlist('csv')
+    x_data = request.form.get('xdata')
+    y_data = request.form.get('ydata')
+    print(uploaded_files)
+    strain = ""
+    for file in uploaded_files:
+        title = str(file).split()
+        strain = title[2]
+        df = pd.read_csv(file)
+        df = analyze(df)
+        f = make_reg_df(df,strain)
+        final_df = pd.concat([final_df, pd.DataFrame(f)], ignore_index=True)
+    print(final_df)
+    png = make_error_bars(final_df, x_data, y_data)
+    with open('error_bars.png', 'wb') as f:
+        f.write(png.read())
+    return send_file('error_bars.png', as_attachment=True)
+
 @app.route('/test',  methods=['POST', 'GET'])
 def test():
     return {'test': 'hello'}

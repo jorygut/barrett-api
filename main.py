@@ -431,7 +431,7 @@ def analyze_patterns(df):
                 lawn_dic[row['Strain']] += 1
             speed_increase_dict[row['Strain']] += ((row['Average_Speed_During_Shock'] - row['Average_Speed_Before_Shock']) / row['Average_Speed_Before_Shock']) * 100
             speed_decrease_dict[row['Strain']] += ((row['Average_Speed_After_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
-        distance_dict[row['Strain']] = row['Total_Distance'].iloc[0]
+        distance_dict[row['Strain']] = row['Total_Distance']
     for i in strain_dic:
         data = {
             'strain': i,

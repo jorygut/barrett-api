@@ -413,33 +413,44 @@ def analyze_patterns(df):
     lawn_dic = {}
     speed_increase_dict = {}
     speed_decrease_dict = {}
+
     for index, row in df.iterrows():
         if row['Strain'] not in strain_dic:
             strain_dic[row['Strain']] = 1
             speed_dic[row['Strain']] = row['Average_Speed']
-            speed_increase_dict[row['Strain']] = ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
-            speed_decrease_dict[row['Strain']] = ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
-            if row['Leaves_Lawn'] == True:
+            speed_increase_dict[row['Strain']] = [
+                ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
+            ]
+            speed_decrease_dict[row['Strain']] = [
+                ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
+            ]
+            if row['Leaves_Lawn']:
                 lawn_dic[row['Strain']] = 1
             else:
                 lawn_dic[row['Strain']] = 0
         else:
             strain_dic[row['Strain']] += 1
             speed_dic[row['Strain']] += row['Average_Speed']
-            if row['Leaves_Lawn'] == True:
+            if row['Leaves_Lawn']:
                 lawn_dic[row['Strain']] += 1
-            speed_increase_dict[row['Strain']] += ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
-            speed_decrease_dict[row['Strain']] += ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
-    for i in strain_dic:
+            speed_increase_dict[row['Strain']].append(
+                ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
+            )
+            speed_decrease_dict[row['Strain']].append(
+                ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
+            )
+
+    for strain in strain_dic:
         data = {
-            'strain': i,
-            'count': strain_dic[i],
-            'average_speed': speed_dic[i] / strain_dic[i],
-            'percent_leaves_lawn': lawn_dic[i] / strain_dic[i],
-            'average_speed_shock_start': speed_increase_dict[i] / strain_dic[i],
-            'average_speed_shock_end': speed_decrease_dict[i] / strain_dic[i]
+            'strain': strain,
+            'count': strain_dic[strain],
+            'average_speed': speed_dic[strain] / strain_dic[strain],
+            'percent_leaves_lawn': lawn_dic[strain] / strain_dic[strain],
+            'average_speed_shock_start': sum(speed_increase_dict[strain]) / len(speed_increase_dict[strain]),
+            'average_speed_shock_end': sum(speed_decrease_dict[strain]) / len(speed_decrease_dict[strain])
         }
         values.append(data)
+
     return values
         
 #API call for image, lawn count, and xml file

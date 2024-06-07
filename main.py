@@ -417,8 +417,8 @@ def analyze_patterns(df):
         if row['Strain'] not in strain_dic:
             strain_dic[row['Strain']] = 1
             speed_dic[row['Strain']] = row['Average_Speed']
-            speed_increase_dict[row['Strain']] = ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
-            speed_decrease_dict[row['Strain']] = ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
+            speed_increase_dict[row['Strain']] = ((row['Average_Speed_During_Shock'] - row['Average_Speed_Before_Shock']) / row['Average_Speed_Before_Shock']) * 100
+            speed_decrease_dict[row['Strain']] = ((row['Average_Speed_After_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
             if row['Leaves_Lawn'] == True:
                 lawn_dic[row['Strain']] = 1
             else:
@@ -428,8 +428,8 @@ def analyze_patterns(df):
             speed_dic[row['Strain']] += row['Average_Speed']
             if row['Leaves_Lawn'] == True:
                 lawn_dic[row['Strain']] += 1
-            speed_increase_dict[row['Strain']] += ((row['Average_Speed_Before_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
-            speed_decrease_dict[row['Strain']] += ((row['Average_Speed_During_Shock'] - row['Average_Speed_After_Shock']) / row['Average_Speed_After_Shock']) * 100
+            speed_increase_dict[row['Strain']] += ((row['Average_Speed_During_Shock'] - row['Average_Speed_Before_Shock']) / row['Average_Speed_Before_Shock']) * 100
+            speed_decrease_dict[row['Strain']] += ((row['Average_Speed_After_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
     for i in strain_dic:
         data = {
             'strain': i,

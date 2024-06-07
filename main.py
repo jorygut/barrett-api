@@ -413,6 +413,7 @@ def analyze_patterns(df):
     lawn_dic = {}
     speed_increase_dict = {}
     speed_decrease_dict = {}
+    distance_dict = {}
     for index, row in df.iterrows():
         if row['Strain'] not in strain_dic:
             strain_dic[row['Strain']] = 1
@@ -430,6 +431,7 @@ def analyze_patterns(df):
                 lawn_dic[row['Strain']] += 1
             speed_increase_dict[row['Strain']] += ((row['Average_Speed_During_Shock'] - row['Average_Speed_Before_Shock']) / row['Average_Speed_Before_Shock']) * 100
             speed_decrease_dict[row['Strain']] += ((row['Average_Speed_After_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
+        distance_dict[row['Strain']] = row['Total_Distance'].iloc[0]
     for i in strain_dic:
         data = {
             'strain': i,
@@ -437,7 +439,8 @@ def analyze_patterns(df):
             'average_speed': speed_dic[i] / strain_dic[i],
             'percent_leaves_lawn': lawn_dic[i] / strain_dic[i],
             'average_speed_shock_start': (speed_increase_dict[i] / strain_dic[i]),
-            'average_speed_shock_end': speed_decrease_dict[i] / strain_dic[i]
+            'average_speed_shock_end': speed_decrease_dict[i] / strain_dic[i],
+            'total_distance': distance_dict[i]
         }
         values.append(data)
     return values

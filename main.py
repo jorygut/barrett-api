@@ -45,11 +45,13 @@ def index():
 
 #Create xml route
 @app.route("/api/xml", methods=['POST'])
+
 def read_xml_file(file):
-    #Parse xml file
+    # Parse xml file
     tree = ET.parse(file)
     root = tree.getroot()
-    #Configure tracking data
+    
+    # Configure tracking data
     part_count = 0
     detection_count = 0
     tracks_info = {
@@ -69,6 +71,7 @@ def read_xml_file(file):
             continue
 
         detections = []
+        previous_detection = None
         for detection in particle.findall('./detection'):
             detection_count += 1
             detection_info = {
@@ -76,14 +79,28 @@ def read_xml_file(file):
                 'x': float(detection.attrib['x']),
                 'y': float(detection.attrib['y']),
                 'z': float(detection.attrib['z']),
-                'speed': math.sqrt(float(detection.attrib['x']) ** 2 + float(detection.attrib['y']) ** 2)
+                'speed': None
             }
+            if previous_detection is not None:
+                # Calculate displacement between consecutive frames
+                delta_x = detection_info['x'] - previous_detection['x']
+                delta_y = detection_info['y'] - previous_detection['y']
+                
+                # Calculate time elapsed between consecutive frames
+                time_elapsed = tracks_info['frameInterval'] * (detection_info['t'] - previous_detection['t'])
+                
+                # Calculate speed
+                detection_info['speed'] = math.sqrt(delta_x ** 2 + delta_y ** 2) / time_elapsed
+            
             detections.append(detection_info)
+            previous_detection = detection_info
+        
         particle_info['detections'] = detections
         particle_data.append(particle_info)
 
     tracks_info['particles'] = particle_data
     return tracks_info
+
 
 #Detect feed lawns
 def detect_lighter_circles(image_path, par1, par2, lawn_count):

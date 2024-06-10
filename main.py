@@ -79,9 +79,9 @@ def read_xml_file(file):
                 'x': float(detection.attrib['x']),
                 'y': float(detection.attrib['y']),
                 'z': float(detection.attrib['z']),
-                'speed': None
+                'speed': 0
             }
-            if previous_detection is not None:
+            if previous_detection != 0:
                 # Calculate displacement between consecutive frames
                 delta_x = detection_info['x'] - previous_detection['x']
                 delta_y = detection_info['y'] - previous_detection['y']

@@ -276,6 +276,7 @@ def regress(file, x_data, y_data):
     y_vars = y_data.split(',')   
     #Ensure variables are floats
     df = file
+    df.fillna(0)
     df['Strain'] = label_encoder.fit_transform(df['Strain'])
     df['Leaves_Lawn'] = df['Leaves_Lawn'].astype(float)
     df['Strain'] = df['Strain'].astype(float)

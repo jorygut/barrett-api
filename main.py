@@ -594,6 +594,7 @@ def get_insight():
         f = make_reg_df(df,strain)
         final_df = pd.concat([final_df, pd.DataFrame(f)], ignore_index=True)
     print(final_df)
+    final_df.fillna(value=pd.np.nan, inplace=True)
     all_strains = analyze_patterns(final_df)
     print(all_strains)
     return jsonify(all_strains)

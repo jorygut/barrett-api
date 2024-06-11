@@ -486,9 +486,10 @@ def upload_image_and_number():
     print(number)
     print(image_file)
 
+    uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
+    os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
+
     if (image_file and image_file.filename.endswith(('.jpg', '.jpeg', '.png'))):
-        uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
-        os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
 
         image_filename = secure_filename(image_file.filename)
 

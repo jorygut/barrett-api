@@ -333,11 +333,11 @@ def predict_tracks(track_file):
     tracks = pd.read_csv(track_file)
     
     # Iterate through files in 'RegressionFiles' directory
-    for file in os.listdir('/Users/student/Barrett-app-2/backend/venv1/RegressionFiles'):
+    for file in os.listdir('/RegressionFiles'):
         if file.endswith('.csv') and 'distance' not in file:  # Filter out distance files
             name = file.split()
             strain = name[1]
-            cur_df = pd.read_csv(os.path.join('/Users/student/Barrett-app-2/backend/venv1/RegressionFiles', file))
+            cur_df = pd.read_csv(os.path.join('/RegressionFiles', file))
             # Rename columns with strain prefix
             for col in cur_df.columns:
                 new_col_name = f'{strain}_{col}'

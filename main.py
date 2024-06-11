@@ -476,10 +476,12 @@ def analyze_patterns(df):
 def upload_image_and_number():
     print('image uploaded')
 
+    if 'xml_file' not in request.files:
+        return jsonify({"error": "No XML file part in the request"}), 400
     #Get data from API
-    image_file = request.files['image_file']
-    number = request.form['number']
-    xml_file = request.files['xml_file']
+    image_file = request.files.get('image_file')
+    number = request.form.get('number')
+    xml_file = request.files.get('xml_file')
     print(xml_file)
     print(number)
     print(image_file)

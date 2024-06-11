@@ -485,9 +485,6 @@ def upload_image_and_number():
     print(xml_file)
     print(number)
     print(image_file)
-    #Check inputs
-    if image_file.filename == '' or xml_file.filename == '':
-        return jsonify({"error": "No selected file for either image or XML"}), 400
 
     if (image_file and image_file.filename.endswith(('.jpg', '.jpeg', '.png'))):
         uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])

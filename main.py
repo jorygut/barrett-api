@@ -158,7 +158,8 @@ def configure_circle(img,lawn_count):
 #Create output csv
 def create_file(input_file,lawn_count, img):
     print('creating file')
-    x_cords, y_cords = configure_circle(img,lawn_count)
+    if lawn_count > 0:
+        x_cords, y_cords = configure_circle(img,lawn_count)
     print('circle configured')
     tracks_info = read_xml_file(input_file)
     print(tracks_info)
@@ -184,12 +185,13 @@ def create_file(input_file,lawn_count, img):
                 speed2 += j['speed']
             if j['t'] < 121:
                 speed3 += j['speed']
-            if (int(j['x'] + 1) in x_cords or int(j['x'] - 1) in x_cords) and (int(j['y'] + 1) in y_cords or int(j['y'] - 1) in y_cords):
-                part_df.at[detection_count,f'obs_{particle_count}_in_lawn'] = True
-            else:
-                part_df.at[detection_count,f'obs_{particle_count}_in_lawn'] = False
-                if (seconds <= 90):
-                    part_df.at[detection_count,f'obs_{particle_count}_left_lawn_90_secs'] = True
+            if lawn_count > 0:
+                if (int(j['x'] + 1) in x_cords or int(j['x'] - 1) in x_cords) and (int(j['y'] + 1) in y_cords or int(j['y'] - 1) in y_cords):
+                    part_df.at[detection_count,f'obs_{particle_count}_in_lawn'] = True
+                else:
+                    part_df.at[detection_count,f'obs_{particle_count}_in_lawn'] = False
+                    if (seconds <= 90):
+                        part_df.at[detection_count,f'obs_{particle_count}_left_lawn_90_secs'] = True
             part_df.at[detection_count,f'obs_{particle_count}_x'] = j['x']
             part_df.at[detection_count,f'obs_{particle_count}_y'] = j['y']
             part_df.at[detection_count,f'obs_{particle_count}_t'] = j['t']

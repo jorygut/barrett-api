@@ -158,7 +158,7 @@ def configure_circle(img,lawn_count):
 #Create output csv
 def create_file(input_file,lawn_count, img):
     print('creating file')
-    if lawn_count > 0:
+    if lawn_count > 0 and img != 0:
         x_cords, y_cords = configure_circle(img,lawn_count)
     print('circle configured')
     tracks_info = read_xml_file(input_file)
@@ -475,12 +475,6 @@ def analyze_patterns(df):
 @app.route('/image', methods=['POST'])
 def upload_image_and_number():
     print('image uploaded')
-    #Check proper inputs
-    if 'image_file' not in request.files:
-        return jsonify({"error": "No image file part in the request"}), 400
-    
-    if 'number' not in request.form:
-        return jsonify({"error": "No number part in the request"}), 400
 
     if 'xml_file' not in request.files:
         return jsonify({"error": "No XML file part in the request"}), 400
@@ -495,24 +489,24 @@ def upload_image_and_number():
     if image_file.filename == '' or xml_file.filename == '':
         return jsonify({"error": "No selected file for either image or XML"}), 400
 
-    if not (image_file and image_file.filename.endswith(('.jpg', '.jpeg', '.png'))):
-        return jsonify({"error": "Image file type not allowed, please upload an image file"}), 400
+    if (image_file and image_file.filename.endswith(('.jpg', '.jpeg', '.png'))):
+        uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
+        os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
 
+        image_filename = secure_filename(image_file.filename)
+
+        # Construct image path
+        image_path = os.path.join(uploads_dir, image_filename)
+
+        # Save the image
+        image_file.save(image_path)
+    else:
+        image_path = 0
+    print('starting df')
     try:
         number = int(number)
     except ValueError:
         return jsonify({"error": "Number is not valid"}), 400
-    print('starting df')
-    uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
-    os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
-
-    image_filename = secure_filename(image_file.filename)
-
-    # Construct image path
-    image_path = os.path.join(uploads_dir, image_filename)
-
-    # Save the image
-    image_file.save(image_path)
     df = create_file(xml_file, number, image_path)
     print('finished_df')
     print(df)

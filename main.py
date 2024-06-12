@@ -82,14 +82,11 @@ def read_xml_file(file):
                 'speed': 0
             }
             if previous_detection is not None:
-                # Calculate displacement between consecutive frames
                 delta_x = detection_info['x'] - previous_detection['x']
                 delta_y = detection_info['y'] - previous_detection['y']
                 
-                # Calculate time elapsed between consecutive frames
                 time_elapsed = tracks_info['frameInterval'] * (detection_info['t'] - previous_detection['t'])
                 
-                # Calculate speed
                 detection_info['speed'] = math.sqrt(delta_x ** 2 + delta_y ** 2) / time_elapsed
             
             detections.append(detection_info)
@@ -457,7 +454,7 @@ def analyze_patterns(df):
                 speed_decrease_dict[row['Strain']] += ((row['Average_Speed_After_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
             else:
                 speed_decrease_dict[row['Strain']] += 0
-        distance_dict[row['Strain']] = row['Total_Distance']
+        distance_dict[row['Strain']] += row['Total_Distance']
     for i in strain_dic:
         data = {
             'strain': i,

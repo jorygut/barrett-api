@@ -331,7 +331,7 @@ def predict_tracks(track_file):
     
     # Iterate through files in 'RegressionFiles' directory
     for file in os.listdir('/RegressionFiles'):
-        if file.endswith('.csv') and 'distance' not in file:  # Filter out distance files
+        if file.endswith('.csv') and 'distance' not in file: 
             name = file.split()
             strain = name[1]
             cur_df = pd.read_csv(os.path.join('/RegressionFiles', file))
@@ -339,48 +339,41 @@ def predict_tracks(track_file):
             for col in cur_df.columns:
                 new_col_name = f'{strain}_{col}'
                 cur_df = cur_df.rename(columns={col: new_col_name})
-            df = pd.concat([df, cur_df.reset_index(drop=True)], axis=1)  # Concatenate horizontally
+            df = pd.concat([df, cur_df.reset_index(drop=True)], axis=1)
     
-    # Preprocessing
+    #Preprocessing
     df = df.fillna(0)
     df = df.loc[:, ~df.columns.str.contains('unnamed', case=False)]
 
-    # Prepare feature and target variables
     target_columns = [col for col in df.columns if 'x' in col or 'y' in col]
     features = [col for col in df.columns if col not in target_columns]
 
     X = df[features]
     y = df[target_columns]
 
-    # Train-test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Model training
     model = LinearRegression()
     model.fit(X_train, y_train)
 
-    # Model evaluation
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
     print("Mean Squared Error:", mse)
 
-    # Prediction for every single x and y coordinate
     next_coordinates = model.predict(df[features])
 
-    # Plot actual vs predicted values
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    # Get actual values
     actual_x = df[[col for col in df.columns if 'x' in col]]
     actual_y = df[[col for col in df.columns if 'y' in col]]
 
-    # Plot actual values
-    ax.scatter(actual_x, actual_y, color='blue', label='Actual', s=5)  # Adjust the size of dots here (s=5)
+    #Plot actual values
+    ax.scatter(actual_x, actual_y, color='blue', label='Actual', s=5)
 
-    # Plot predicted values
-    predicted_x = next_coordinates[:, ::2]  # Get every second column (x-coordinates)
-    predicted_y = next_coordinates[:, 1::2]  # Get every second column starting from index 1 (y-coordinates)
-    ax.scatter(predicted_x, predicted_y, color='red', label='Predicted', s=5)  # Adjust the size of dots here (s=5)
+    #Plot predicted values
+    predicted_x = next_coordinates[:, ::2]  
+    predicted_y = next_coordinates[:, 1::2]  
+    ax.scatter(predicted_x, predicted_y, color='red', label='Predicted', s=5)  
 
     ax.set_title('Actual vs Predicted Values')
     ax.set_xlabel('X Coordinate')
@@ -392,35 +385,27 @@ def predict_tracks(track_file):
     fig.savefig(filename, format='png')
 
     return fig
-
+#Create error bars
 def make_error_bars(df, x, y):
-    # Group by the 'Strain' column and calculate the mean and standard deviation for 'y'
     grouped = df.groupby(x)[y].agg(['mean', 'std'])
 
-    # Extract x and y values
     x_values = grouped.index
     y_means = grouped['mean'].values
     y_std = grouped['std'].values
 
-    # Plotting
     plt.errorbar(x_values, y_means, yerr=y_std, fmt='o', capsize=5, label='Data with error bars')
 
-    # Customize the plot
     plt.xlabel(x)
     plt.ylabel(y)
     plt.title(f'Plot with Error Bars ({x} vs {y})')
     plt.legend()
     plt.grid(True)
 
-    # Save the plot as a BytesIO object
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
-
-    # Clear the plot to avoid displaying it again
     plt.clf()
 
-    # Return the BytesIO object containing the plot
     return buffer
 
 def analyze_patterns(df):
@@ -484,16 +469,15 @@ def upload_image_and_number():
     print(image_file)
 
     uploads_dir = os.path.join(app.config['UPLOAD_FOLDER'])
-    os.makedirs(uploads_dir, exist_ok=True)  # Create directory with error handling
+    os.makedirs(uploads_dir, exist_ok=True) 
 
+    #Handle image
     if (image_file and image_file.filename.endswith(('.jpg', '.jpeg', '.png'))):
 
         image_filename = secure_filename(image_file.filename)
 
-        # Construct image path
         image_path = os.path.join(uploads_dir, image_filename)
 
-        # Save the image
         image_file.save(image_path)
     else:
         image_path = 0
@@ -507,14 +491,14 @@ def upload_image_and_number():
     print(df)
     xml_filename = os.path.splitext(xml_file.filename)[0]
 
-    # Construct CSV filename
+    #Handle csvs
     csv_filename = f"{xml_filename}.csv"
     print(csv_filename)
 
-    # Save DataFrame to CSV
+    #Save df
     df.to_csv(os.path.join(uploads_dir, csv_filename), index=False)
 
-    # Send the file as an attachment
+    #Send file
     return send_file(os.path.join(uploads_dir, csv_filename), as_attachment=True)
 #Create and download regression model
 @app.route("/regress", methods=['POST'])
@@ -596,11 +580,11 @@ def get_insight():
     all_strains = analyze_patterns(final_df)
     print(all_strains)
     return jsonify(all_strains)
-
+#Api test route
 @app.route('/test',  methods=['POST', 'GET'])
 def test():
     return {'test': 'hello'}
-
+#Run main and create upload folder
 if __name__ == "__main__":
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)

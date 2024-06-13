@@ -11,4 +11,3 @@ seaborn
 gunicorn
 flask[async]
 werkzeug
-flask_executor

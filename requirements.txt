@@ -11,3 +11,4 @@ seaborn
 gunicorn
 flask[async]
 werkzeug
+librosa

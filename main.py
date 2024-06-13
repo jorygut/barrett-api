@@ -646,7 +646,7 @@ def get_insight():
     print(all_strains)
     return jsonify(all_strains)
 
-@app.route('/mp3', methods=['POST', 'GET'])
+@app.route('/audio', methods=['POST', 'GET'])
 def analyze_mp3():
     song = request.files.get('mp3')
     results = analyze_music(song)

@@ -649,6 +649,7 @@ def get_insight():
 @app.route('/audio', methods=['POST', 'GET'])
 def analyze_mp3():
     song = request.files.get('mp3')
+    print(song)
     results = analyze_music(song)
     return jsonify(results)
 #Api test route

@@ -12,3 +12,4 @@ gunicorn
 flask[async]
 werkzeug
 librosa
+soxr

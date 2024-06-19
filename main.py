@@ -651,6 +651,7 @@ def analyze_mp3():
     song = request.files.get('mp3')
     print(song)
     results = analyze_music(song)
+    print(results)
     return jsonify(results)
 #Api test route
 @app.route('/test',  methods=['POST', 'GET'])

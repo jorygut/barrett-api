@@ -425,6 +425,7 @@ def analyze_patterns(df):
             speed_dic[row['Strain']] = row['Average_Speed']
             speed_increase_dict[row['Strain']] = ((row['Average_Speed_During_Shock'] - row['Average_Speed_Before_Shock']) / row['Average_Speed_Before_Shock']) * 100
             speed_decrease_dict[row['Strain']] = ((row['Average_Speed_After_Shock'] - row['Average_Speed_During_Shock']) / row['Average_Speed_During_Shock']) * 100
+            distance_dict[row['Strain']] = row['Total_Distance']
             if row['Leaves_Lawn'] == True:
                 lawn_dic[row['Strain']] = 1
             else:

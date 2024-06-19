@@ -13,3 +13,4 @@ flask[async]
 werkzeug
 librosa
 soxr
+soundfile

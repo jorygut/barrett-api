@@ -455,68 +455,63 @@ def analyze_patterns(df):
         values.append(data)
     return values
 def analyze_music(file_path):
-    try:
-        # Load the audio file directly with librosa
-        y, sr = librosa.load(file_path, sr=None)
-        
-        # Extract tempo (beats per minute)
-        tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-        tempo = float(tempo)
-        
-        # Extract chroma features and estimate the key
-        chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
-        key = chroma.mean(axis=1).argmax()
-        keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-        key_name = keys[key]
-        
-        # Harmonic-Percussive Source Separation to isolate the harmonic part
-        y_harmonic, y_percussive = librosa.effects.hpss(y)
-        
-        # Extract bass line from the harmonic part
-        bass_chroma = librosa.feature.chroma_cqt(y=y_harmonic, sr=sr)
-        bass = np.mean(bass_chroma[:3], axis=0)
-        bass_note = bass.argmax() % len(keys)
-        bass_note_name = keys[bass_note]
-        
-        # Convert the bass note to Hz
-        A4 = 440
-        C0 = A4 * 2**(-4.75)
-        bass_frequency = C0 * 2**(bass_note / 12.0)
-        
-        # Extract additional features
-        spectral_centroid = np.mean(librosa.feature.spectral_centroid(y=y, sr=sr))
-        spectral_bandwidth = np.mean(librosa.feature.spectral_bandwidth(y=y, sr=sr))
-        spectral_contrast = np.mean(librosa.feature.spectral_contrast(y=y, sr=sr))
-        spectral_flatness = np.mean(librosa.feature.spectral_flatness(y=y))
-        rms = np.mean(librosa.feature.rms(y=y))
-        zero_crossing_rate = np.mean(librosa.feature.zero_crossing_rate(y))
-        hnr = np.mean(librosa.effects.harmonic(y))
-        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-        beat_strength = np.mean(onset_env)
-        tonnetz = np.mean(librosa.feature.tonnetz(y=y, sr=sr), axis=1)
-        
-        # Create a dictionary with the extracted values
-        results = {
-            "tempo": tempo,
-            "key": key_name,
-            "bass_note": bass_note_name,
-            "bass_frequency": bass_frequency,
-            "spectral_centroid": spectral_centroid,
-            "spectral_bandwidth": spectral_bandwidth,
-            "spectral_contrast": spectral_contrast,
-            "spectral_flatness": spectral_flatness,
-            "rms_energy": rms,
-            "zero_crossing_rate": zero_crossing_rate,
-            "harmonic_to_noise_ratio": hnr,
-            "beat_strength": beat_strength,
-            "tonnetz": tonnetz
-        }
-        
-        return results
+    # Load the audio file directly with librosa
+    y, sr = librosa.load(file_path, sr=None)
     
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+    # Extract tempo (beats per minute)
+    tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+    tempo = float(tempo)
+    
+    # Extract chroma features and estimate the key
+    chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
+    key = chroma.mean(axis=1).argmax()
+    keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+    key_name = keys[key]
+    
+    # Harmonic-Percussive Source Separation to isolate the harmonic part
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+    
+    # Extract bass line from the harmonic part
+    bass_chroma = librosa.feature.chroma_cqt(y=y_harmonic, sr=sr)
+    bass = np.mean(bass_chroma[:3], axis=0)
+    bass_note = bass.argmax() % len(keys)
+    bass_note_name = keys[bass_note]
+    
+    # Convert the bass note to Hz
+    A4 = 440
+    C0 = A4 * 2**(-4.75)
+    bass_frequency = C0 * 2**(bass_note / 12.0)
+    
+    # Extract additional features
+    spectral_centroid = np.mean(librosa.feature.spectral_centroid(y=y, sr=sr))
+    spectral_bandwidth = np.mean(librosa.feature.spectral_bandwidth(y=y, sr=sr))
+    spectral_contrast = np.mean(librosa.feature.spectral_contrast(y=y, sr=sr))
+    spectral_flatness = np.mean(librosa.feature.spectral_flatness(y=y))
+    rms = np.mean(librosa.feature.rms(y=y))
+    zero_crossing_rate = np.mean(librosa.feature.zero_crossing_rate(y))
+    hnr = np.mean(librosa.effects.harmonic(y))
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+    beat_strength = np.mean(onset_env)
+    tonnetz = np.mean(librosa.feature.tonnetz(y=y, sr=sr), axis=1)
+    
+    # Create a dictionary with the extracted values
+    results = {
+        "tempo": tempo,
+        "key": key_name,
+        "bass_note": bass_note_name,
+        "bass_frequency": bass_frequency,
+        "spectral_centroid": spectral_centroid,
+        "spectral_bandwidth": spectral_bandwidth,
+        "spectral_contrast": spectral_contrast,
+        "spectral_flatness": spectral_flatness,
+        "rms_energy": rms,
+        "zero_crossing_rate": zero_crossing_rate,
+        "harmonic_to_noise_ratio": hnr,
+        "beat_strength": beat_strength,
+        "tonnetz": tonnetz
+    }
+    
+    return results
         
 #API call for image, lawn count, and xml file
 @app.route('/image', methods=['POST'])

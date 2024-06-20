@@ -662,9 +662,9 @@ def analyze_mp3():
     filename = secure_filename(song.filename)
     song_bytes = BytesIO(song.read())
         
-    logging.debug(f"Received file: {song}")
-    logging.debug(f"BytesIO object: {song_bytes}")
-    logging.debug(f"File content: {song_bytes.getvalue()}")  
+    print(f"Received file: {song}")
+    print(f"BytesIO object: {song_bytes}")
+    print(f"File content: {song_bytes.getvalue()}")  
     print(song)
     print(song_bytes)
     results = analyze_music(song_bytes)

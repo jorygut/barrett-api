@@ -19,6 +19,7 @@ from flask import send_file
 from flask_vite import Vite
 from io import BytesIO
 import io
+from io import BufferedReader
 import json
 import matplotlib
 matplotlib.use('Agg')
@@ -30,6 +31,8 @@ from werkzeug.utils import secure_filename
 import asyncio
 import librosa
 import soundfile as sf
+from pydub import AudioSegment
+import traceback
 
 #Configure Flask API
 app = Flask(__name__)
@@ -656,6 +659,8 @@ def get_insight():
 @app.route('/audio', methods=['POST', 'GET'])
 def analyze_mp3():
     song = request.files.get('mp3')
+    song.name = song.filename
+    song = BufferedReader(song)
     print(song)
     results = analyze_music(song)
     print(results)

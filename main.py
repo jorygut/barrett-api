@@ -31,6 +31,7 @@ from werkzeug.utils import secure_filename
 import asyncio
 import librosa
 import soundfile as sf
+import pydub
 from pydub import AudioSegment
 import traceback
 
@@ -459,10 +460,10 @@ def analyze_patterns(df):
         }
         values.append(data)
     return values
-def analyze_music(file_path):
+def analyze_music(file_obj):
     try:
         # Load the audio file using soundfile
-        y, sr = sf.read(file_path)
+        y, sr = sf.read(file_obj)
         y = y.T  # Transpose to match librosa's expected shape if necessary
 
         # Convert stereo to mono if necessary
@@ -525,7 +526,7 @@ def analyze_music(file_path):
         return results
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred during music analysis: {e}")
         return None
         
 #API call for image, lawn count, and xml file
@@ -659,16 +660,28 @@ def get_insight():
 @app.route('/audio', methods=['POST', 'GET'])
 def analyze_mp3():
     song = request.files.get('mp3')
+    if not song:
+        return jsonify({"error": "No file uploaded"}), 400
+
     filename = secure_filename(song.filename)
     song_bytes = BytesIO(song.read())
-        
-    print(f"Received file: {song}")
-    print(f"BytesIO object: {song_bytes}")
-    print(f"File content: {song_bytes.getvalue()}")  
-    print(song)
-    print(song_bytes)
+
+    # Convert MP3 to WAV using pydub
+    if filename.endswith('.mp3'):
+        audio = pydub.AudioSegment.from_mp3(song_bytes)
+        song_bytes = BytesIO()
+        audio.export(song_bytes, format="wav")
+        song_bytes.seek(0)  # Rewind the BytesIO object for reading
+
+    print(song)  # Should print a FileStorage object
+    print(song_bytes)  # Should print a BytesIO object
+
     results = analyze_music(song_bytes)
     print(results)
+
+    if results is None:
+        return jsonify({"error": "Failed to analyze the music"}), 500
+
     return jsonify(results)
 #Api test route
 @app.route('/test',  methods=['POST', 'GET'])

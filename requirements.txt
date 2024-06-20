@@ -14,6 +14,5 @@ werkzeug
 librosa
 soxr
 soundfile
-traceback
 pydub
 io

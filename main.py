@@ -662,6 +662,7 @@ def analyze_mp3():
     filename = secure_filename(song.filename)
     song_bytes = BytesIO(song.read())
     print(song)
+    print(song_bytes)
     results = analyze_music(song_bytes)
     print(results)
     return jsonify(results)
